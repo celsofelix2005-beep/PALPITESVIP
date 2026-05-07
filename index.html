@@ -1,82 +1,71 @@
-```html
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Palpites de Futebol</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-}
-    h2 {
-      color: #333;
-      text-align: center;
-}
-    ul {
-      list-style: none;
-      padding: 0;
-}
-    li {
-      background: #fff;
-      margin-bottom: 10px;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-    em {
-      color: #888;
-}
-    #pagamento {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-    a {
-      color: #0077cc;
-      text-decoration: none;
-}
-    ```css
-/* Responsivo para celular */
-@media screen and (max-width: 600px) {
-  body {
-    padding: 10px;
-    max-width: 100%;
-}
-
-  h2 {
-    font-size: 22px;
-    text-align: center;
-}
-
-  li {
-    font-size: 16px;
-    padding: 12px;
-}
-
-  input, button {
-    width: 100%;
-    font-size: 18px;
-    margin-top: 10px;
-}
-}
-```
-  </style>
-</head>
-<body>
-
-  <h2>Palpites de Hoje – Série B</h2>
-  <ul id="lista-palpites"></ul>
-  <div id="pagamento"></div>
-
-  <script src="palpates.js"></script>
-
-</body>
-</html>
-```
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palpites MZ - Palpites de Futebol</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background: #0f172a; color: #fff; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        .logo { width: 120px; margin: 0 auto 10px; display: block; }
+        h1 { color: #22c55e; font-size: 1.8rem; margin-bottom: 5px; }
+        .data { color: #94a3b8; font-size: 0.9rem; }
+        .tabs { display: flex; gap: 10px; margin: 20px 0; }
+        .tab-btn {
+            flex: 1; padding: 12px; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; font-size: 1rem;
+        }
+        .tab-gratis { background: #1e293b; color: #22c55e; border: 2px solid #22c55e; }
+        .tab-vip { background: #ca8a04; color: #0f172a; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .jogo {
+            background: #1e293b; 
+            border-left: 4px solid #22c55e;
+            border-radius: 8px; padding: 16px; margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .jogo.vip { border-left-color: #ca8a04; }
+        .times { font-size: 1.2rem; font-weight: bold; margin-bottom: 8px; }
+        .hora-liga { color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px; }
+        .palpite { 
+            background: #22c55e; color: #0f172a; display: inline-block;
+            padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem;
+        }
+        .palpite.vip { background: #ca8a04; }
+        .analise { margin-top: 10px; font-size: 0.9rem; color: #cbd5e1; }
+        .btn-whatsapp {
+            background: #25D366; color: #fff; padding: 12px; border-radius: 8px;
+            text-decoration: none; font-weight: bold; display: block; text-align: center;
+            margin-top: 12px;
+        }
+        .pagamento {
+            background: #0f172a; border: 2px solid #22c55e; padding: 16px;
+            border-radius: 8px; margin-top: 12px;
+        }
+        .pagamento h3 { color: #22c55e; margin-bottom: 12px; font-size: 1.1rem; }
+        .metodo { 
+            background: #1e293b; padding: 12px; border-radius: 6px; 
+            margin-bottom: 10px; font-size: 0.9rem;
+        }
+        .metodo:last-child { margin: 0; }
+        .metodo strong { color: #cbd5e1; }
+        .valor { font-size: 1.3rem; font-weight: bold; color: #22c55e; margin-bottom: 12px; }
+        .senha-box { 
+            background: #0f172a; border: 2px dashed #ca8a04; padding: 15px; 
+            border-radius: 8px; margin: 15px 0; text-align: center;
+        }
+        .senha-input { 
+            padding: 10px; border-radius: 6px; border: none; width: 60%; 
+            text-align: center; font-weight: bold; margin: 10px 0;
+        }
+        .btn-desbloquear {
+            background: #ca8a04; color: #0f172a; padding: 10px 20px; border: none;
+            border-radius: 6px; font-weight: bold; cursor: pointer;
+        }
+        .palpite-oculto { display: none; }
+        .aviso { 
+            background: #7f1d1d; padding: 12px; border-radius: 8px; 
+            margin: 20px 0; font
