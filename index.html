@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Palpites MZ</title>
+<title>Palpites MZ IA</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#e2e8f0;font-family:system-ui;padding:20px;max-width:600px;margin:auto}
@@ -33,7 +33,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
 </div>
 
 <div id="gratis" class="conteudo">
-  <!-- JOGOS GRATIS -->
   <div class="jogo">
     <span class="liga">Moçambola - 19:15</span>
     <span class="odd">2.42</span>
@@ -55,7 +54,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
 </div>
 
 <div id="diario" class="conteudo" style="display:none">
-  <!-- JOGOS VIP DIARIO -->
   <div class="vip-content" style="display:none">
     <div class="jogo">
       <span class="liga">Premier League - 20:00</span>
@@ -79,7 +77,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
 </div>
 
 <div id="semanal" class="conteudo" style="display:none">
-  <!-- JOGOS VIP SEMANAL -->
   <div class="vip-content" style="display:none">
     <div class="jogo">
       <span class="liga">Champions - 20:00</span>
@@ -100,7 +97,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
 <div class="rodape">Última atualização: 08/05/2026 08:54</div>
 
 <script>
-// TROCA A SENHA AQUI TODO DIA
 const SENHA_DIARIO = "PALPITE0805"; 
 const SENHA_SEMANAL = "SEMANA0805";
 
@@ -120,9 +116,8 @@ function liberar(tipo) {
     localStorage.setItem('vip_' + tipo, senhaCorreta);
     document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
     document.querySelector('#' + tipo + ' .lock').style.display = 'none';
-    alert('Acesso Liberado! ✅');
   } else {
-    alert('Senha incorreta! ❌');
+    alert('Senha incorreta!');
   }
 }
 
@@ -134,10 +129,6 @@ function checarSenhaSalva(tipo) {
     document.querySelector('#' + tipo + ' .lock').style.display = 'none';
   }
 }
-
-// Checa se já tem acesso salvo ao abrir
-checarSenhaSalva('diario');
-checarSenhaSalva('semanal');
 </script>
 </body>
 </html>
