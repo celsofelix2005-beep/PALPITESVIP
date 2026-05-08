@@ -1,70 +1,22 @@
 name: Atualiza Palpites IA
 on:
   schedule:
-    - cron: '0 5,15 * * *' # Roda 07h e 17h horário de Moçambique UTC+2
-  workflow_dispatch:
+    - cron: '3 15 * * *' # 19:00 Maputo - 1x por dia
+  workflow_dispatch: # Botão pra rodar manual
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Gera bilhetes com IA
-        run: |
-          pip install requests
-          python << 'EOF'
-          import json,random,datetime
-          from datetime import timezone,timedelta
-
-          fuso = timezone(timedelta(hours=2))
-          agora = datetime.datetime.now(fuso).strftime("%d/%m/%Y %H:%M")
-
-          times = ["Al Ahly","Mamelodi Sundowns","Simba SC","TP Mazembe","Zamalek","Espérance","Petro Luanda","Wydad","Inter","Benfica","Barcelona","Real Madrid","Man City","Bayern"]
-          ligas = ["CAF Champions","Moçambola","Premier League","La Liga","Serie A","Bundesliga","Ligue 1"]
-          palpites = ["Vitória Casa","Vitória Fora","Empate","Ambas Marcam Sim","Ambas Marcam Não","Mais de 2.5","Menos de 2.5","Mais de 1.5","Dupla Hipótese 1X"]
-
-          def gera_jogo(odd_min=1.40, odd_max=2.20):
-            casa,fora = random.sample(times,2)
-            return {
-              "liga": random.choice(ligas),
-              "hora": f"{random.randint(14,22)}:{random.choice(['00','15','30','45'])}",
-              "casa": casa, "fora": fora,
-              "palpite": random.choice(palpites),
-              "odd": f"{random.uniform(odd_min, odd_max):.2f}"
-            }
-
-          def monta_bilhete(qtd_jogos, odd_total_alvo):
-            bilhete = []
-            total = 1.0
-            for i in range(qtd_jogos):
-              if i == qtd_jogos - 1:
-                odd_necessaria = odd_total_alvo / total
-                jogo = gera_jogo(odd_necessaria * 0.95, odd_necessaria * 1.05)
-              else:
-                jogo = gera_jogo(1.45, 1.90)
-              bilhete.append(jogo)
-              total *= float(jogo['odd'])
-            return bilhete
-
-          dados = {
-            "GRATIS": [gera_jogo(1.50,2.80) for _ in range(3)],
-            "DIARIO": monta_bilhete(2, 3.0),
-            "SEMANAL": monta_bilhete(3, 4.1),
-            "UPDATE": agora
-          }
-
-          with open('index.html','r',encoding='utf-8') as f: html = f.read()
-          novo = html.replace('const DADOS = {GRATIS:[],DIARIO:[],SEMANAL:[],UPDATE:""};',
-                             f'const DADOS = {json.dumps(dados, ensure_ascii=False)};')
-          with open('index.html','w',encoding='utf-8') as f: f.write(novo)
-          print("Bilhetes atualizados:", dados)
-          EOF
-
-      - name: Commit e Push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "IA: Bilhetes atualizados" || exit 0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install requests pytz
+      - run: python update.py
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Atualiza jogos IA" || exit 0
           git push
