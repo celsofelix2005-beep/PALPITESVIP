@@ -84,6 +84,7 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
       <h3>Bayern x PSG</h3>
       <div class="palpite">Palpite: Vitória Casa</div>
     </div>
+  </div>
   <div class="lock">
     <div style="font-size:40px">🔒</div>
     <h2>VIP Semanal Bloqueado</h2>
@@ -105,7 +106,6 @@ function mostrar(aba) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById(aba).style.display = 'block';
   event.target.classList.add('active');
-  checarSenhaSalva(aba);
 }
 
 function liberar(tipo) {
@@ -116,19 +116,22 @@ function liberar(tipo) {
     localStorage.setItem('vip_' + tipo, senhaCorreta);
     document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
     document.querySelector('#' + tipo + ' .lock').style.display = 'none';
+    alert('Acesso Liberado! ✅');
   } else {
-    alert('Senha incorreta!');
+    alert('Senha incorreta! ❌');
   }
 }
 
-function checarSenhaSalva(tipo) {
-  const senhaSalva = localStorage.getItem('vip_' + tipo);
-  const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
-  if(senhaSalva === senhaCorreta) {
-    document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
-    document.querySelector('#' + tipo + ' .lock').style.display = 'none';
-  }
+window.onload = function() {
+  ['diario','semanal'].forEach(tipo => {
+    const senhaSalva = localStorage.getItem('vip_' + tipo);
+    const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
+    if(senhaSalva === senhaCorreta) {
+      document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
+      document.querySelector('#' + tipo + ' .lock').style.display = 'none';
+    }
+  });
 }
 </script>
 </body>
-      </html>
+  </html>
