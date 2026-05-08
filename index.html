@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palpites MZ IA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f172a;color:#e2e8f0;font-family:system-ui;padding:20px;max-width:600px;margin:auto}
+h1{color:#22c55e;text-align:center;margin-bottom:20px}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tab{flex:1;padding:12px;background:#1e293b;border:none;color:#94a3b8;border-radius:8px;font-weight:bold;cursor:pointer}
+.tab.active{background:#22c55e;color:#0f172a}
+.jogo{background:#1e293b;padding:15px;border-radius:12px;margin-bottom:12px;border-left:4px solid #22c55e}
+.jogo h3{font-size:16px;margin-bottom:5px}
+.jogo .liga{color:#64748b;font-size:12px}
+.jogo .palpite{color:#22c55e;font-weight:bold;margin:8px 0}
+.jogo .odd{float:right;background:#0f172a;padding:4px 8px;border-radius:6px;font-size:14px}
+.bilhete{background:#1e293b;margin:16px 0;padding:15px;border-radius:12px;border:2px solid #22c55e}
+.bilhete-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.bilhete-titulo{color:#22c55e;font-weight:bold}
+.bilhete-tag{background:#22c55e;color:#0f172a;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:bold}
+.lock{text-align:center;padding:40px 20px;background:#1e293b;border-radius:12px;border:2px dashed #f59e0b;margin-top:20px}
+.lock-icon{font-size:48px;margin-bottom:12px}
+.lock h2{margin:15px 0;color:#f59e0b}
+.lock p{color:#94a3b8;margin-bottom:16px;line-height:1.5}
+.lock input{width:100%;padding:12px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;text-align:center;font-size:16px;margin:15px 0}
+.lock button{width:100%;padding:12px;background:#22c55e;border:none;border-radius:8px;color:#0f172a;font-weight:bold;cursor:pointer;margin-bottom:12px}
+.btn-vip{display:inline-block;background:#334155;color:#94a3b8;padding:12px 24px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:14px}
+.whatsapp{position:fixed;bottom:20px;right:20px;background:#25d366;color:#fff;padding:15px 20px;border-radius:50px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.rodape{text-align:center;color:#64748b;font-size:12px;margin-top:30px}
+.vazio{text-align:center;color:#64748b;padding:40px 0}
+</style>
+</head>
+<body>
+<h1>Palpites MZ IA</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="trocaAba('gratis',event)">Grátis</button>
+  <button class="tab" onclick="trocaAba('diario',event)">VIP Diário</button>
+  <button class="tab" onclick="trocaAba('semanal',event)">VIP Semanal</button>
+</div>
+
+<div id="gratis" class="conteudo"></div>
+<div id="diario" class="conteudo" style="display:none"></div>
+<div id="semanal" class="conteudo" style="display:none"></div>
+
+<a href="https://wa.me/258860676062?text=Quero%20ser%20VIP" class="whatsapp">WhatsApp VIP</a>
+<div class="rodape">Última atualização: <span id="dataUpdate">--/--/---- --:--</span></div>
+
+<script>
+// ===== CONFIGURAÇÃO - TROCA TODO DIA =====
+const SENHA_DIARIO = "PALPITE0805";
+const SENHA_SEMANAL = "SEMANA0805";
+
+// ===== JOGOS - O ROBÔ VAI TROCAR ISSO AUTOMATICAMENTE =====
+const DADOS = {
+  GRATIS: [
+    {liga:"Moçambola - 19:15", casa:"Petro Luanda", fora:"Espérance", palpite:"Ambas Marcam Não", odd:"2.42"},
+    {liga:"CAF Champions - 18:15", casa:"Inter", fora:"Simba SC", palpite:"Ambas Marcam Sim", odd:"1.78"}
+  ],
+  DIARIO: [
+    {liga:"Premier League - 20:00", casa:"Man City", fora:"Arsenal", palpite:"Mais de 2.5 Golos", odd:"3.10"},
+    {liga:"La Liga - 21:30", casa:"Real Madrid", fora:"Barcelona", palpite:"Ambas Marcam Sim", odd:"1.95"}
+  ],
+  SEMANAL: [
+    {liga:"Champions - 20:00", casa:"Bayern", fora:"PSG", palpite:"Vitória Casa", odd:"4.50"}
+  ],
+  UPDATE:"08/05/2026 10:26"
+};
+
+// ===== CÓDIGO - NÃO MEXER DAQUI PRA BAIXO =====
+function trocaAba(aba,event){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.conteudo').forEach(c=>c.style.display='none');
+  if(event) event.target.classList.add('active');
+  document.getElementById(aba).style.display='block';
+  renderAba(aba);
+}
+
+function cardJogo(j){
+  return `<div class="jogo">
+    <span class="liga">${j.liga}</span>
+    <span class="odd">${j.odd}</span>
+    <h3>${j.casa} x ${j.fora}</h3>
+    <div class="palpite">Palpite: ${j.palpite}</div>
+  </div>`;
+}
+
+function cardBilhete(tipo, jogos){
+  if(!jogos.length) return '<p class="vazio">Bilhete em análise</p>';
+  const totalOdd = jogos.reduce((t,j)=> t * parseFloat(j.odd), 1).toFixed(2);
+  const selo = tipo=='DIARIO'? `Odd Total ${totalOdd}` : `Odd Total ${totalOdd}+`;
+  const titulo = tipo=='DIARIO'?'VIP Diário - 2 Jogos': 'VIP Semanal - 3 Jogos';
+  return `<div class="bilhete">
+    <div class="bilhete-top">
+      <span class="bilhete-titulo">${titulo}</span>
+      <span class="bilhete-tag">${selo}</span>
+    </div>
+    ${jogos.map(cardJogo).join('')}
+  </div>`;
+}
+
+function telaBloqueio(tipo){
+  const preco = tipo=='diario' ? '100 MT/dia' : '500 MT/semana';
+  const nome = tipo=='diario' ? 'VIP Diário' : 'VIP Semanal';
+  const idInput = tipo=='diario' ? 'senhaDiario' : 'senhaSemanal';
+  return `<div class="lock">
+    <div class="lock-icon">🔒</div>
+    <h2>${nome} Bloqueado</h2>
+    <p>Faz o pagamento de ${preco} via M-Pesa e digite a senha recebida.</p>
+    <input type="text" id="${idInput}" placeholder="Digite a senha VIP">
+    <button onclick="liberar('${tipo}')">Liberar Acesso</button>
+    <a href="https://wa.me/258860676062?text=Quero%20pagar%20o%20${nome}" class="btn-vip">Pagar via WhatsApp</a>
+  </div>`;
+}
+
+function liberar(tipo) {
+  const idInput = tipo=='diario' ? 'senhaDiario' : 'senhaSemanal';
+  const senhaDigitada = document.getElementById(idInput).value.trim().toUpperCase();
+  const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
+  
+  if(senhaDigitada === senhaCorreta) {
+    localStorage.setItem('vip_' + tipo, senhaCorreta);
+    renderAba(tipo);
+    alert('Acesso Liberado! ✅');
+  } else {
+    alert('Senha incorreta! ❌');
+  }
+}
+
+function renderAba(tipo) {
+  if(tipo === 'gratis') {
+    document.getElementById('gratis').innerHTML = DADOS.GRATIS.map(cardJogo).join('') || '<p class="vazio">Sem jogos grátis hoje</p>';
+    return;
+  }
+  
+  const senhaSalva = localStorage.getItem('vip_' + tipo);
+  const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
+  const dadosTipo = DADOS[tipo.toUpperCase()];
+  
+  document.getElementById(tipo).innerHTML = senhaSalva === senhaCorreta 
+    ? cardBilhete(tipo.toUpperCase(), dadosTipo) 
+    : telaBloqueio(tipo);
+}
+
+// INICIAR
+document.getElementById('dataUpdate').innerText = DADOS.UPDATE;
+renderAba('gratis');
+</script>
+</body>
+                                                                       </html>
