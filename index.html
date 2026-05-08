@@ -67,6 +67,7 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
       <h3>Real Madrid x Barcelona</h3>
       <div class="palpite">Palpite: Ambas Marcam Sim</div>
     </div>
+  </div>
   <div class="lock">
     <div style="font-size:40px">🔒</div>
     <h2>VIP Diário Bloqueado</h2>
@@ -84,7 +85,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
       <h3>Bayern x PSG</h3>
       <div class="palpite">Palpite: Vitória Casa</div>
     </div>
-  </div>
   <div class="lock">
     <div style="font-size:40px">🔒</div>
     <h2>VIP Semanal Bloqueado</h2>
@@ -116,9 +116,8 @@ function liberar(tipo) {
     localStorage.setItem('vip_' + tipo, senhaCorreta);
     document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
     document.querySelector('#' + tipo + ' .lock').style.display = 'none';
-    alert('Acesso Liberado! ✅');
   } else {
-    alert('Senha incorreta! ❌');
+    alert('Senha incorreta!');
   }
 }
 
@@ -134,4 +133,4 @@ window.onload = function() {
 }
 </script>
 </body>
-  </html>
+      </html>
