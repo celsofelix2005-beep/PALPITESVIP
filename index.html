@@ -67,7 +67,6 @@ h1{color:#22c55e;text-align:center;margin-bottom:20px}
       <h3>Real Madrid x Barcelona</h3>
       <div class="palpite">Palpite: Ambas Marcam Sim</div>
     </div>
-  </div>
   <div class="lock">
     <div style="font-size:40px">🔒</div>
     <h2>VIP Diário Bloqueado</h2>
@@ -109,15 +108,17 @@ function mostrar(aba) {
 }
 
 function liberar(tipo) {
-  const senhaDigitada = document.getElementById('senha' + tipo.charAt(0).toUpperCase() + tipo.slice(1)).value;
+  const input = document.getElementById('senha' + tipo.charAt(0).toUpperCase() + tipo.slice(1));
+  const senhaDigitada = input.value.trim().toUpperCase();
   const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
   
-  if(senhaDigitada.toUpperCase() === senhaCorreta) {
+  if(senhaDigitada === senhaCorreta) {
     localStorage.setItem('vip_' + tipo, senhaCorreta);
     document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
     document.querySelector('#' + tipo + ' .lock').style.display = 'none';
+    alert('Acesso Liberado! ✅');
   } else {
-    alert('Senha incorreta!');
+    alert('Senha incorreta! ❌');
   }
 }
 
@@ -126,11 +127,15 @@ window.onload = function() {
     const senhaSalva = localStorage.getItem('vip_' + tipo);
     const senhaCorreta = tipo === 'diario' ? SENHA_DIARIO : SENHA_SEMANAL;
     if(senhaSalva === senhaCorreta) {
-      document.querySelector('#' + tipo + ' .vip-content').style.display = 'block';
-      document.querySelector('#' + tipo + ' .lock').style.display = 'none';
+      const vipContent = document.querySelector('#' + tipo + ' .vip-content');
+      const lock = document.querySelector('#' + tipo + ' .lock');
+      if(vipContent && lock) {
+        vipContent.style.display = 'block';
+        lock.style.display = 'none';
+      }
     }
   });
 }
 </script>
 </body>
-      </html>
+    </html>
