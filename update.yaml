@@ -1,0 +1,22 @@
+name: Atualiza Palpites IA
+on:
+  schedule:
+    - cron: '02 06 * * *' # 06:02 Maputo = 06:02 UTC
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests pytz
+      - run: python update.py
+      - run: |
+          git config user.name "bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add index.html
+          git commit -m "update auto 3 abas"
+          git push
+          
