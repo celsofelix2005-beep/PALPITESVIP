@@ -3,8 +3,7 @@ from datetime import datetime
 import pytz
 
 API_KEY = "1378cb3e8b27d7ed496ce567fad82cb9"
-# Adicionei Brasileirão, Argentina, MLS pra ter jogo o ano todo
-LIGAS = [39, 140, 135, 78, 61, 71, 128, 253, 262] 
+LIGAS = [39, 140, 135, 78, 61, 71, 128, 253, 262, 88] # Adicionei Eredivisie = 88
 
 def pega_jogos(qtd):
     fuso = pytz.timezone('Africa/Maputo')
@@ -12,15 +11,15 @@ def pega_jogos(qtd):
     jogos = []
     
     for liga in LIGAS:
-        # Testa season 2024 e 2025 automático
         for season in [2024, 2025]:
-            url = f"https://v3.football.api-sports.io/fixtures?date={hoje}&league={liga}&season={season}"
+            # AQUI TÁ O FIX: &timezone=Africa/Maputo
+            url = f"https://v3.football.api-sports.io/fixtures?date={hoje}&league={liga}&season={season}&timezone=Africa/Maputo"
             try:
                 r = requests.get(url, headers={'x-apisports-key': API_KEY}).json()
                 if r.get('response'):
                     for j in r['response']:
                         if len(jogos) >= qtd: break
-                        hora = datetime.fromisoformat(j['fixture']['date']).astimezone(fuso).strftime('%H:%M')
+                        hora = datetime.fromisoformat(j['fixture']['date']).strftime('%H:%M')
                         jogos.append({
                             "liga": f"{j['league']['name']} - {hora}",
                             "casa": j['teams']['home']['name'],
@@ -28,7 +27,7 @@ def pega_jogos(qtd):
                             "palpite": "Mais de 1.5 Golos",
                             "odd": "1.80"
                         })
-                    break # se achou jogo nessa liga, para de testar season
+                    break
             except: continue
         if len(jogos) >= qtd: break
     
