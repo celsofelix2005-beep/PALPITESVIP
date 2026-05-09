@@ -1,7 +1,7 @@
 name: Atualiza Palpites IA
 on:
   schedule:
-    - cron: '50 06 * * *' # 06:50 Maputo = 06:50 UTC
+    - cron: '02 06 * * *' # 06:02 Maputo = 06:02 UTC
   workflow_dispatch:
 jobs:
   update:
