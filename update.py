@@ -3,7 +3,8 @@ from datetime import datetime
 import pytz
 
 API_KEY = "1378cb3e8b27d7ed496ce567fad82cb9"
-LIGAS = [39, 140, 135, 78, 61, 94, 88, 71] # Adicionei mais ligas pra ter jogos
+# Adicionei Brasileirão, Argentina, MLS pra ter jogo o ano todo
+LIGAS = [39, 140, 135, 78, 61, 71, 128, 253, 262] 
 
 def pega_jogos(qtd):
     fuso = pytz.timezone('Africa/Maputo')
@@ -11,41 +12,38 @@ def pega_jogos(qtd):
     jogos = []
     
     for liga in LIGAS:
-        # season=2024 = temporada atual 2024/2025
-        url = f"https://v3.football.api-sports.io/fixtures?date={hoje}&league={liga}&season=2024"
-        try:
-            r = requests.get(url, headers={'x-apisports-key': API_KEY}).json()
-            for j in r['response']:
-                if len(jogos) >= qtd: break
-                hora = datetime.fromisoformat(j['fixture']['date']).astimezone(fuso).strftime('%H:%M')
-                jogos.append({
-                    "liga": f"{j['league']['name']} - {hora}",
-                    "casa": j['teams']['home']['name'],
-                    "fora": j['teams']['away']['name'],
-                    "palpite": "Mais de 1.5 Golos",
-                    "odd": "1.80"
-                })
-            if len(jogos) >= qtd: break
-        except: continue
-    return jogos
+        # Testa season 2024 e 2025 automático
+        for season in [2024, 2025]:
+            url = f"https://v3.football.api-sports.io/fixtures?date={hoje}&league={liga}&season={season}"
+            try:
+                r = requests.get(url, headers={'x-apisports-key': API_KEY}).json()
+                if r.get('response'):
+                    for j in r['response']:
+                        if len(jogos) >= qtd: break
+                        hora = datetime.fromisoformat(j['fixture']['date']).astimezone(fuso).strftime('%H:%M')
+                        jogos.append({
+                            "liga": f"{j['league']['name']} - {hora}",
+                            "casa": j['teams']['home']['name'],
+                            "fora": j['teams']['away']['name'],
+                            "palpite": "Mais de 1.5 Golos",
+                            "odd": "1.80"
+                        })
+                    break # se achou jogo nessa liga, para de testar season
+            except: continue
+        if len(jogos) >= qtd: break
+    
+    return jogos if jogos else [{"liga": "Sem jogos hoje", "casa": "Volta", "fora": "amanhã", "palpite": "---", "odd": "---"}]
 
 def main():
     fuso = pytz.timezone('Africa/Maputo')
     data = datetime.now(fuso).strftime('%d/%m/%Y %H:%M')
     
-    # Pega jogos pra cada aba
-    jogos_gratis = pega_jogos(3)    # 3 jogos grátis
-    jogos_diario = pega_jogos(2)    # 2 jogos VIP Diário  
-    jogos_semanal = pega_jogos(3)   # 3 jogos VIP Semanal
-    
-    # Se não achar jogo, mete aviso
-    if not jogos_gratis: jogos_gratis = [{"liga": "Sem jogos", "casa": "---", "fora": "---", "palpite": "---", "odd": "---"}]
-    if not jogos_diario: jogos_diario = [{"liga": "Sem jogos", "casa": "---", "fora": "---", "palpite": "---", "odd": "---"}]
-    if not jogos_semanal: jogos_semanal = [{"liga": "Sem jogos", "casa": "---", "fora": "---", "palpite": "---", "odd": "---"}]
+    jogos_gratis = pega_jogos(3)
+    jogos_diario = pega_jogos(2)  
+    jogos_semanal = pega_jogos(3)
     
     with open('index.html', 'r', encoding='utf-8') as f: html = f.read()
     
-    # Atualiza as 3 abas de uma vez
     html = re.sub(r'GRATIS:\s*\[.*?\]', f'GRATIS: {json.dumps(jogos_gratis, ensure_ascii=False)}', html, flags=re.DOTALL)
     html = re.sub(r'DIARIO:\s*\[.*?\]', f'DIARIO: {json.dumps(jogos_diario, ensure_ascii=False)}', html, flags=re.DOTALL)
     html = re.sub(r'SEMANAL:\s*\[.*?\]', f'SEMANAL: {json.dumps(jogos_semanal, ensure_ascii=False)}', html, flags=re.DOTALL)
