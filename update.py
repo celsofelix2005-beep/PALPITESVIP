@@ -11,7 +11,7 @@ def pega_jogos(qtd):
     jogos = []
     
     for liga in LIGAS:
-        for season in [2024, 2025]:
+        for season in [2025, 2026]:
             # AQUI TÁ O FIX: &timezone=Africa/Maputo
             url = f"https://v3.football.api-sports.io/fixtures?date={hoje}&league={liga}&season={season}&timezone=Africa/Maputo"
             try:
@@ -24,8 +24,8 @@ def pega_jogos(qtd):
                             "liga": f"{j['league']['name']} - {hora}",
                             "casa": j['teams']['home']['name'],
                             "fora": j['teams']['away']['name'],
-                            "palpite": "Mais de 1.5 Golos",
-                            "odd": "1.80"
+                            "palpite": "Mais de 2.5 Golos",
+                            "odd": "2.80"
                         })
                     break
             except: continue
